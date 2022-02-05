@@ -1,10 +1,28 @@
 import express from 'express';
+import cors from 'cors';
 
 require('dotenv').config()
 const app = express();
-const port = process.env.PORT || 8000;
+var corsOptions = {
+    origin: "*"
+};
 
-app.get('/', (req, res) => res.send('Hello world'));
+app.use(cors(corsOptions));
+
+// parse request of content-type - application/json
+app.use(express.json());
+
+// parse request of content-type - application/x-www-form-urlencoded
+app.use(express.urlencoded({ extended: true }));
+
+// welcome route
+app.get('/', (req, res) => {
+    res.json({ message: "Welcome to todo-api" });
+});
+
+
+// set port for request
+const port = process.env.PORT || 8080;
 app.listen(port, () => {
-    console.log(`[SERVER]: Server is running at http://localhost:${port}`);
+    console.log(`Server is running on port ${port}`);
 });
