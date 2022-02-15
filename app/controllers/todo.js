@@ -45,6 +45,7 @@ exports.getTodos = asyncHandler(async(req, res, next) => {
     if (todo) {
         res.status(200).json({
             success: {
+                message: "Todo fetched successfully",
                 todo: todo
             }
         });
@@ -62,7 +63,8 @@ exports.getTodoById = asyncHandler(async(req, res, next) => {
     if (todo) {
         res.status(200).json({
             success: {
-
+                message: "Todo fetched successfully",
+                todo: todo
             }
         });
     } else {
@@ -74,13 +76,37 @@ exports.getTodoById = asyncHandler(async(req, res, next) => {
 // @route   PUT api/todos
 // @desc    Edit todo data
 // @access  Public
-exports.putTodo = asyncHandler(async(req, res, next) => {
+exports.updateTodo = asyncHandler(async(req, res, next) => {
+    const todo = await Todo.findOne({ _id: req.params.id });
 
+    if (!todo) {
+        res.status(404);
+        throw new Error("Todo don't exist");
+    }
+
+    todo.set(req.body);
+    const updateTodo = await todo.save();
+    res.status(200).json({
+        success: {
+            todo: updateTodo
+        }
+    });
 });
 
 // @route   DELETE api/todos
 // @desc    Delete todo data
 // @access  Public
 exports.deleteTodo = asyncHandler(async(req, res, next) => {
+    const todo = await Todo.findByIdAndRemove(req.params.id);
 
+    if (!todo) {
+        res.status(404);
+        throw new Error(`Todo not found for id=${req.params.id}`);
+    } else {
+        res.status(200).json({
+            success: {
+                message: "Todo deleted successfully"
+            }
+        });
+    };
 });
